@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <style>
+    /* Color Variables */
+    :root {
+      --dark-navy: #0f172a;
+      --bright-blue: #3b82f6;
+      --dark-blue: #1e3a8a;
+      --white: #ffffff;
+      --very-light-gray: #f9fafb;
+      --pale-yellow: #fef3c7;
+      --very-dark: #111827;
+      --dark-gray: #374151;
+      --light-bluish: #e0e7ff;
+    }
+
+    /* Reset and Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(90deg, var(--dark-navy), var(--dark-blue));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--dark-navy);
+      overflow: hidden;
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    /* Fade In Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Container */
+    .login-container {
+      display: flex;
+      width: 900px;
+      height: 500px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: var(--white);
+      animation: fadeInUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    /* Left Panel */
+    .login-container .left {
+      flex: 1;
+      background: linear-gradient(135deg, var(--dark-blue), var(--bright-blue));
+      color: var(--white);
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      animation: leftGradientShift 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes leftGradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .login-container .left h1 {
+      font-size: 38px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .login-container .left p {
+      font-size: 16px;
+      margin-bottom: 35px;
+      line-height: 1.5;
+      color: var(--light-bluish);
+    }
+
+    .login-container .left button {
+      width: max-content;
+      background-color: var(--white);
+      color: var(--bright-blue);
+      border: none;
+      padding: 14px 30px;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 3px 12px rgba(59, 130, 246, 0.5);
+    }
+
+    .login-container .left button:hover {
+      background-color: var(--pale-yellow);
+      color: var(--dark-navy);
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(254, 243, 199, 0.6);
+    }
+
+    /* Right Panel */
+    .login-container .right {
+      flex: 1;
+      padding: 50px 60px;
+      background-color: var(--very-light-gray);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: var(--dark-navy);
+    }
+
+    .right h2 {
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark-navy);
+    }
+
+    .right form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right input,
+    .right select {
+      padding: 14px 15px;
+      margin-bottom: 20px;
+      border: 1.8px solid var(--dark-gray);
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .right input:focus,
+    .right select:focus {
+      border-color: var(--bright-blue);
+      box-shadow: 0 0 8px var(--bright-blue);
+      outline: none;
+    }
+
+    .right button {
+      padding: 14px 0;
+      background-color: var(--bright-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.7);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .right button:hover {
+      background-color: var(--dark-blue);
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(30, 58, 138, 0.8);
+    }
+
+    /* Links below form */
+    .right .back-to-register,
+    .right .forgot-password {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .right .back-to-register a,
+    .right .forgot-password a {
+      color: var(--bright-blue);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .right .back-to-register a:hover,
+    .right .forgot-password a:hover {
+      color: var(--dark-blue);
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      position: fixed;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      font-size: 12px;
+      color: var(--white);
+      text-align: center;
+      background-color: var(--very-dark);
+      padding: 8px 0;
+      border-top: 2px solid var(--dark-gray);
+      font-weight: 500;
+      animation: fadeInUp 1.2s ease forwards;
+      opacity: 0;
+      z-index: 10;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    footer span {
+      font-weight: 700;
+      color: var(--bright-blue);
+    }
+
+    /* Hide navbar */
+    .navbar {
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .login-container {
+        flex-direction: column;
+        width: 90%;
+        height: auto;
+      }
+
+      .login-container .left,
+      .login-container .right {
+        padding: 40px 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    🏛️Shri Dharmastala Manjunatheshwara College of Engineering and Technology
+    <a href="/">Home</a>
+  </div>
+
+  <div class="login-container">
+    <div class="left">
+      <h1>Hello, welcome!</h1>
+      <p>Welcome back! Please log in to access your personalized hostel dashboard and stay connected with all hostel services securely and effortlessly.</p>
+      
+    </div>
+    <div class="right">
+      <h2>Log In</h2>
+      <form action="/login" method="POST">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <select name="role" required>
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="student">Student</option>
+        </select>
+        <button type="submit">Login</button>
+      </form>
+      <div class="forgot-password">
+        <a href="{{ url_for('reset_password_simple') }}">Forgot password?</a>
+      </div>
+      <div class="back-to-register">
+        <p>Not a member yet? <a href="/register">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 <strong>Shri Dharmastala Manjunatheshwara College of Engineering & Technology</strong>. All rights
+    reserved.<br />
+    Designed & Developed by <span>HMS team</span>
+  </footer>
+</body>
+
+</html>

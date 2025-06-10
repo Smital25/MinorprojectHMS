@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin - Attendance Records</title>
+  <style>
+    /* Body & container */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a; /* dark navy blue */
+      color: #ffffff; /* white text */
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      animation: fadeInPage 1s ease forwards;
+    }
+
+    .navbar {
+      background-color: #ffffff; /* white */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar p {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1e3a8a; /* dark blue */
+      margin: 0;
+      letter-spacing: 1.2px;
+      text-shadow: none;
+    }
+
+    .dashboard-button {
+      background: linear-gradient(90deg, #3b82f6, #1e3a8a); /* bright to dark blue gradient */
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.6);
+      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .dashboard-button:hover {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.8);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 30px auto 50px;
+      background-color: #f9fafb; /* very light gray */
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      animation: fadeInContainer 1.2s ease forwards;
+      color: #111827; /* very dark blue/black text for contrast */
+    }
+
+    h2 {
+      text-align: center;
+      color: #1e3a8a; /* dark blue */
+      font-weight: 700;
+      font-size: 2.4rem;
+      margin-bottom: 25px;
+      text-shadow: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #111827; /* very dark blue text */
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff; /* white background for table */
+    }
+
+    thead tr {
+      background: linear-gradient(90deg, #3b82f6, #1e3a8a); /* bright to dark blue gradient */
+      box-shadow: inset 0 -3px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    thead th {
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: left;
+      border-bottom: 2px solid #374151; /* dark gray border */
+      color: #f9fafb; /* very light gray text */
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    }
+
+    tbody tr {
+      background-color: #f9fafb; /* very light gray */
+      border-bottom: 1.5px solid #e0e7ff; /* light bluish */
+      transition: background-color 0.3s ease;
+      cursor: default;
+    }
+
+    tbody tr:hover {
+      background-color: #fef3c7; /* pale yellow notification bg */
+      color: #111827; /* very dark text */
+      box-shadow: 0 0 10px #fbbf24; /* subtle yellow glow */
+    }
+
+    tbody td {
+      padding: 12px 20px;
+      border-right: 1px solid #e0e7ff; /* light bluish */
+      font-size: 1rem;
+    }
+
+    tbody td:last-child {
+      border-right: none;
+    }
+
+    /* Report download button */
+    .report-button {
+      display: inline-block;
+      margin-top: 25px;
+      background: linear-gradient(90deg, #3b82f6, #1e3a8a);
+      color: #ffffff;
+      padding: 12px 28px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.5);
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-align: center;
+      user-select: none;
+    }
+
+    .report-button:hover {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      transform: translateY(-3px);
+      box-shadow: 0 7px 25px rgba(30, 58, 138, 0.75);
+    }
+
+    /* Animations */
+    @keyframes fadeInPage {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInContainer {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+        margin: 20px 10px 40px;
+      }
+
+      thead th, tbody td {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <p>🏛️ Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</p>
+    <a href="/admin_dashboard" class="dashboard-button">Dashboard</a>
+  </div>
+
+  <!-- Attendance Table -->
+  <div class="container">
+    <h2>Attendance Records</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>MAC Address</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="attendance_table"></tbody>
+    </table>
+
+    <a href="/generate_report" class="report-button">Download Attendance Report</a>
+  </div>
+
+  <script>
+    fetch('/view_attendance/attendance_record')
+      .then(response => response.json())
+      .then(data => {
+        let tableBody = document.getElementById("attendance_table");
+        data.forEach(record => {
+          let row = `<tr>
+            <td>${record.student_name}</td>
+            <td>${record.student_id}</td>
+            <td>${record.mac_address}</td>
+            <td>${record.date}</td>
+            <td>${record.time}</td>
+            <td>${record.status}</td>
+          </tr>`;
+          tableBody.innerHTML += row;
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Allocation</title>
+  <title>Room Allocation</title>
+ <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #e0e7ff, #f9fafb);
+      margin: 0;
+      padding: 0;
+      color: #0f172a;
+    }
+
+    .header {
+      background: linear-gradient(to right, #3b82f6, #1e3a8a);
+      color: #ffffff;
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .back-button {
+      background-color: #ffffff;
+      color: #3b82f6;
+      border: none;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #e0e7ff;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 24px;
+      color: #1e3a8a;
+    }
+
+    select {
+      display: block;
+      width: 60%;
+      margin: 15px auto;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background-color: #ffffff;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s ease;
+    }
+
+    select:focus {
+      box-shadow: 0 0 0 3px #3b82f644;
+      outline: none;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .room {
+      background-color: #f9fafb;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 3px solid transparent;
+    }
+
+    .room:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    .vacant {
+      border-color: #10b981;
+      background-color: #d1fae5;
+    }
+
+    .partial {
+      border-color: #f59e0b;
+      background-color: #fef3c7;
+    }
+
+    .full {
+      border-color: #ef4444;
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      z-index: 1000;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      z-index: 1001;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    #modal h3 {
+      margin-top: 0;
+      color: #1e3a8a;
+    }
+
+    #studentList {
+      margin-bottom: 20px;
+      max-height: 150px;
+      overflow-y: auto;
+      background-color: #f9fafb;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      background-color: #ffffff;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      margin-right: 10px;
+      background-color: #3b82f6;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #1e3a8a;
+    }
+
+    button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    footer {
+      margin-top: 50px;
+      background-color: #111827;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-top: 2px solid #374151;
+    }
+
+    footer small {
+      color: #e0e7ff;
+    }
+
+    
+  </style>
+</head>
+<body>
+
+    <div class="header">
+    <h1> Room Allocation</h1>
+    <button class="back-button" onclick="window.location.href='/main'">← Back to Dashboard</button>
+  </div>
+
+
+  <h2>Select Gender</h2>
+  <select id="genderSelect" onchange="updateHostelOptions()">
+    <option value="">Select Gender</option>
+    <option value="Female">Female</option>
+    <option value="Male">Male</option>
+  </select>
+
+  <h2>Select Hostel</h2>
+  <select id="hostelSelect" onchange="clearRooms()">
+    <option value="">Select Hostel</option>
+  </select>
+
+  <h2>Select Sharing</h2>
+  <select id="sharingSelect">
+    <option value="">Select</option>
+    <option value="2">2 Sharing</option>
+    <option value="3">3 Sharing</option>
+    <option value="8">8 Sharing</option>
+  </select>
+
+  <div class="room-grid" id="roomGrid"></div>
+
+  <div id="overlay"></div>
+  <div id="modal">
+    <h3>Room Details</h3>
+    <div id="studentList"></div>
+
+    <h3>Allocate Student</h3>
+    <input type="text" id="studentName" placeholder="Name"><br>
+    <input type="text" id="studentUSN" placeholder="USN"><br>
+    <button id="addBtn" onclick="submitAllocation()">Add Student</button>
+    <button onclick="removeStudent()">Remove Student</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+
+<script>
+let currentRoom = {}, sharing = 0;
+
+document.getElementById("sharingSelect").addEventListener("change", loadRooms);
+document.getElementById("hostelSelect").addEventListener("change", loadRooms);
+
+function updateHostelOptions() {
+  const gender = document.getElementById("genderSelect").value;
+  const hostelSelect = document.getElementById("hostelSelect");
+
+  hostelSelect.innerHTML = '<option value="">Select Hostel</option>';
+
+  let hostels = [];
+  if (gender === "Female") {
+    hostels = ["Hemavati", "Sharavati"];
+  } else if (gender === "Male") {
+    hostels = ["Narmada", "Shalmala", "Netravati"];
+  }
+
+  hostels.forEach(hostel => {
+    const option = document.createElement("option");
+    option.value = hostel;
+    option.textContent = hostel;
+    hostelSelect.appendChild(option);
+  });
+
+  clearRooms();
+}
+
+function clearRooms() {
+  document.getElementById("roomGrid").innerHTML = '';
+}
+
+function loadRooms() {
+  const hostel = document.getElementById("hostelSelect").value;
+  sharing = parseInt(document.getElementById("sharingSelect").value);
+  if (!hostel || !sharing) return;
+
+  fetch(`/get_rooms?hostel=${hostel}&sharing=${sharing}`)
+    .then(res => res.json())
+    .then(data => {
+      const grid = document.getElementById("roomGrid");
+      grid.innerHTML = '';
+      data.rooms.forEach(room => {
+        const div = document.createElement("div");
+        div.className = "room";
+        div.innerText = room.room_number;
+
+        if (room.students.length === 0) {
+          div.classList.add("vacant");
+        } else if (room.students.length < sharing) {
+          div.classList.add("partial");
+        } else {
+          div.classList.add("full");
+          div.title = "Room Full";
+        }
+
+        div.onclick = () => {
+          currentRoom = { ...room, sharing };
+          openModal();
+        };
+
+        grid.appendChild(div);
+      });
+    });
+}
+
+function openModal() {
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById("modal").style.display = "block";
+  updateStudentList();
+
+  const isFull = currentRoom.students.length >= currentRoom.sharing;
+  document.getElementById("studentName").disabled = isFull;
+  document.getElementById("studentUSN").disabled = isFull;
+  document.getElementById("addBtn").disabled = isFull;
+
+  if (isFull) {
+    alert("Room is full. You can only view or remove students.");
+  }
+}
+
+function closeModal() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("modal").style.display = "none";
+  document.getElementById("studentName").value = '';
+  document.getElementById("studentUSN").value = '';
+}
+
+function updateStudentList() {
+  const studentList = document.getElementById("studentList");
+  studentList.innerHTML = '';
+  currentRoom.students.forEach(student => {
+    const div = document.createElement("div");
+    div.innerText = `${student.name} (${student.usn})`;
+    studentList.appendChild(div);
+  });
+}
+
+function submitAllocation() {
+  const name = document.getElementById("studentName").value.trim();
+  const usn = document.getElementById("studentUSN").value.trim();
+  if (!name || !usn) {
+    alert("Both fields required.");
+    return;
+  }
+
+  fetch("/allocate_room", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      room_number: currentRoom.room_number,
+      name: name,
+      student_id: usn
+    })
+  })
+  .then(res => res.json().then(data => ({ status: res.status, body: data })))
+  .then(({ status, body }) => {
+    alert(body.message);
+    if (status === 200) {
+      closeModal();
+      loadRooms();
+    }
+  })
+  .catch(() => alert("Allocation failed."));
+}
+
+
+function removeStudent() {
+  if (currentRoom.students.length === 0) {
+    alert("No students to remove.");
+    return;
+  }
+
+  const studentUSN = prompt("Enter the USN of the student to remove:");
+  if (!studentUSN) return;
+
+  fetch("/remove_student", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      usn: studentUSN,
+      room_number: currentRoom.room_number,              // ✅ MUST BE INCLUDED
+      hostel: document.getElementById("hostelSelect").value // ✅ ALSO REQUIRED
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    closeModal();
+    loadRooms();
+  })
+  .catch(() => alert("Failed to remove student."));
+}
+
+
+</script>
+
+</body>
+</html>

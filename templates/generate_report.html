@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generate Attendance Report</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9fafb;
+      color: #0f172a;
+    }
+
+    .navbar {
+      background-color: #1e3a8a;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar h1 {
+      font-size: 20px;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background-color: #2563eb;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+      margin: 40px auto;
+    }
+
+    h2 {
+      color: #1e3a8a;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #1e3a8a;
+      text-align: left;
+    }
+
+    input[type="date"] {
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: linear-gradient(to right, #3b82f6, #1e3a8a);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #1e3a8a, #3b82f6);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #374151;
+      text-align: center;
+    }
+
+    th {
+      background-color: #e0e7ff;
+      color: #1e3a8a;
+    }
+
+    td {
+      background-color: #f9fafb;
+    }
+
+    .notification {
+      background-color: #fef3c7;
+      padding: 10px;
+      border-left: 5px solid #1e3a8a;
+      margin-top: 20px;
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #e0e7ff;
+      background-color: #111827;
+      padding: 15px;
+      border-top: 1px solid #374151;
+      border-radius: 0 0 12px 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar">
+    <h1>Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</h1>
+    <a href="/view_attendance">Back to View Attendance</a>
+  </div>
+
+  <div class="container">
+    <h2>Generate Attendance Report</h2>
+
+    <label for="start_date">Start Date:</label>
+    <input type="date" id="start_date" />
+
+    <label for="end_date">End Date:</label>
+    <input type="date" id="end_date" />
+
+    <div>
+      <button onclick="generateReport()">Generate Report</button>
+      <button onclick="downloadPDF()">Download PDF Report</button>
+    </div>
+
+    <div id="result"></div>
+
+  </div>
+
+  <script>
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const parts = dateString.split('-');
+      return parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
+
+    function generateReport() {
+      const start_date = formatDate(document.getElementById("start_date").value);
+      const end_date = formatDate(document.getElementById("end_date").value);
+
+      if (!start_date || !end_date) {
+        alert('Please select both start and end dates.');
+        return;
+      }
+
+      fetch('/generate_report/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date, end_date })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const resultDiv = document.getElementById("result");
+        if (data.status === "success") {
+          let html = "<table><tr><th>Name</th><th>Student ID</th><th>Date</th><th>Time</th><th>Status</th></tr>";
+          data.records.forEach(record => {
+            html += `<tr>
+                        <td>${record.student_name}</td>
+                        <td>${record.student_id}</td>
+                        <td>${record.date}</td>
+                        <td>${record.time || 'N/A'}</td>
+                        <td>${record.status}</td>
+                    </tr>`;
+          });
+          html += "</table>";
+          resultDiv.innerHTML = html;
+        } else {
+          resultDiv.innerHTML = `<div class="notification">${data.message}</div>`;
+        }
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        document.getElementById("result").innerHTML = `<div class="notification">An error occurred while generating the report.</div>`;
+      });
+    }
+
+    function downloadPDF() {
+      const start_date = formatDate(document.getElementById("start_date").value);
+      const end_date = formatDate(document.getElementById("end_date").value);
+
+      if (!start_date || !end_date) {
+        alert('Please select both start and end dates.');
+        return;
+      }
+
+      fetch('/generate_report/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date, end_date })
+      })
+      .then(response => {
+        if (response.ok) return response.blob();
+        return response.json().then(data => { throw new Error(data.message); });
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Attendance_Report.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      })
+      .catch(err => alert("Error: " + err.message));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  color: #1f2937;
+}
+
+.navbar {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.navbar h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar-buttons a {
+  text-decoration: none;
+  color: white;
+  padding: 10px 16px;
+  background-color: #2563eb;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-buttons a:hover {
+  opacity: 0.9;
+}
+
+.dashboard {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+h3 {
+  font-size: 22px;
+  color: #1e3a8a;
+  margin-bottom: 15px;
+}
+
+.student-info {
+  display: block;
+  margin-bottom: 30px;
+  background-color: #f9fafb;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.student-info p {
+  background-color: white;
+  padding: 12px 16px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin: 10px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 15px;
+}
+
+th {
+  background-color: #1e3a8a;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f1f5f9;
+}
+
+tr:hover {
+  background-color: #e0f2fe;
+}
+
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 13px;
+  border-radius: 12px;
+  color: white;
+}
+
+.badge-approved {
+  background-color: #10b981;
+}
+
+.badge-rejected {
+  background-color: #ef4444;
+}
+
+.badge-pending {
+  background-color: #f59e0b;
+}
+
+a[href$=".pdf"] {
+  color: #2563eb;
+  text-decoration: underline;
+}
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <h2>Student Dashboard</h2>
+    <div class="navbar-buttons">
+      <a href="{{ url_for('leave_request') }}" class="leave-request-button">Send Leave Request</a>
+      <a href="{{ url_for('student_dashboard') }}" class="logout-button">Logout</a>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <h3>Your Information</h3>
+    <div class="student-info">
+      <p><strong>Student ID:</strong> {{ student['student_id'] }}</p>
+      <p><strong>Room Number:</strong> {{ student['room_number'] }}</p>
+      <p><strong>Name:</strong> {{ student['name'] }}</p>
+      <p><strong>Contact Number:</strong> {{ student['contact_number'] }}</p>
+      <p><strong>Age:</strong> {{ student['age'] }}</p>
+      <p><strong>Gender:</strong> {{ student['gender'] }}</p>
+      <p><strong>Email:</strong> {{ student['email'] }}</p>
+      <p><strong>Date of Birth:</strong> {{ student['dob'] }}</p>
+      <p><strong>Address:</strong> {{ student['address'] }}</p>
+    </div>
+
+    <h3>Your Leave Requests (Total: {{ leave_count }})</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Room ID</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Reason</th>
+          <th>Leave Request PDF</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for leave in leave_requests %}
+        <tr>
+          <td>{{ leave['room_id'] }}</td>
+          <td>{{ leave['start_date'] }}</td>
+          <td>{{ leave['end_date'] }}</td>
+          <td>{{ leave['reason'] }}</td>
+          <td><a href="{{ url_for('static', filename=leave['pdf_filename']) }}" target="_blank">Download PDF</a></td>
+          <td>
+            {% if leave['status'] == 'approved' %}
+              <span class="badge badge-approved">Approved</span>
+            {% elif leave['status'] == 'rejected' %}
+              <span class="badge badge-rejected">Rejected</span>
+            {% else %}
+              <span class="badge badge-pending">Pending</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+    }
+
+    .navbar {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar h2 {
+      margin: 0;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background-color: #2563eb;
+    }
+
+    h3 {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 24px;
+      color: #1e3a8a;
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border: 2px solid #1e3a8a;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #1e3a8a;
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #3b82f6;
+      color: white;
+      font-size: 16px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    a button {
+      margin: 0 5px;
+    }
+
+    a:first-child button {
+      background-color: #10b981;
+      color: white;
+    }
+
+    a:last-child button {
+      background-color: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <div class="navbar">
+    <h2>Admin Dashboard</h2>
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-dashboard-btn">Dashboard</a>
+  </div>
+
+  <!-- ✅ Leave Requests -->
+  <h3>Leave Requests (Total: {{ leave_requests|length }})</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Room ID</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Reason</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for leave in leave_requests %}
+      <tr>
+        <td>{{ leave['student_name'] }}</td>
+        <td>{{ leave['room_id'] }}</td>
+        <td>{{ leave['start_date'] }}</td>
+        <td>{{ leave['end_date'] }}</td>
+        <td>{{ leave['reason'] }}</td>
+        <td>{{ leave['status'] }}</td>
+        <td>
+          <a href="{{ url_for('approve_leave_request', leave_id=leave['_id']) }}">
+            <button>Approve</button>
+          </a>
+          <a href="{{ url_for('reject_leave_request', leave_id=leave['_id']) }}">
+            <button>Reject</button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>

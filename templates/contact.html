@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us - Hostel Management</title>
+  <style>
+    /* General Reset & Body Styling */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+      animation: fadeInBody 1s ease-in;
+    }
+
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ✅ Navbar Styles */
+    .navbar {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-title {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-title span {
+      margin-left: 8px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-left: 10px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-buttons a:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    /* ✅ Container Styling */
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      animation: slideInUp 0.7s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1, h2 {
+      color: #1e3a8a;
+      margin-bottom: 15px;
+    }
+
+    .contact-info p {
+      font-size: 16px;
+    }
+
+    .contact-info ul {
+      padding-left: 20px;
+      list-style-type: disc;
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      transition: border-color 0.3s;
+      font-size: 15px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #1e3a8a;
+      outline: none;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    /* ✅ Responsive Adjustments */
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-buttons {
+        margin-top: 10px;
+      }
+
+      .nav-buttons a {
+        margin: 5px 0 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <div class="navbar">
+    <div class="navbar-title">
+      🏛️ <span>Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</span>
+    </div>
+    <div class="nav-buttons">
+      <!-- <a href="/dashboard">Dashboard</a> -->
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- ✅ Main Container -->
+  <div class="container">
+    <header>
+      <h1>Contact Us</h1>
+    </header>
+
+    <section class="contact-info">
+      <p>If you have any questions or need assistance, feel free to reach out to us:</p>
+      <ul>
+        <li><strong>Email:</strong> shostelmanagement@gmail.com</li>
+        <li><strong>Phone:</strong> +91 98765 43210</li>
+        <li><strong>Address:</strong> Hostel Admin Block, SDMCET University, Dharwad, India</li>
+      </ul>
+    </section>
+
+    <section class="contact-form">
+      <h2>Send Us a Message</h2>
+      <form>
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea placeholder="Your Message" rows="5" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </section>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us - Hostel Management</title>
+  <style>
+    /* General Reset & Body Styling */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f1f5f9;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ✅ Navbar Styles */
+    .navbar {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-title {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-title span {
+      margin-left: 8px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-left: 10px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .nav-buttons a:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+    }
+
+    /* ✅ Main Container */
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      animation: slideInUp 0.7s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      color: #1e3a8a;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    ul li {
+      margin-bottom: 10px;
+    }
+
+    /* ✅ Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-buttons {
+        margin-top: 10px;
+      }
+
+      .nav-buttons a {
+        margin: 5px 5px 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <div class="navbar">
+    <div class="navbar-title">
+      🏛️ <span>Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</span>
+    </div>
+    <div class="nav-buttons">
+      <!-- <a href="/dashboard">Dashboard</a> -->
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- ✅ Main Content -->
+  <div class="container">
+    <header>
+      <h1>About Hostel Management System</h1>
+    </header>
+
+    <section class="about-content">
+  <p>The Hostel Management System is a comprehensive web-based solution developed to efficiently manage all aspects of student hostel administration at Shri Dharmasthala Manjunatheshwar College of Engineering and Technology.</p>
+
+  <p>This system is built to cater to students, hostel wardens, and administrative staff, simplifying day-to-day hostel operations and improving transparency. The application ensures seamless communication and data handling while significantly reducing paperwork and manual efforts.</p>
+
+  <p>Key features of the system include:</p>
+  <ul>
+    <li><strong>Student Registration:</strong> New students can register by filling out a detailed form including personal, academic, and contact information.</li>
+    <li><strong>Room Allocation:</strong> Hostel admins can assign rooms based on gender, sharing preference (2, 3, or 8 sharing), and availability across multiple hostels.</li>
+    <li><strong>Room Swapping:</strong> Students dissatisfied with their allocated rooms can raise swap requests, which the admin can approve or reject.</li>
+    <li><strong>Leave Request Management:</strong> Students can apply for leave through the portal, which is then reviewed and approved by the admin or warden.</li>
+    <li><strong>Complaint Submission:</strong> Students can raise maintenance or behavioral complaints, which are tracked by the admin and can be deleted after resolution.</li>
+    <li><strong>PDF Reports:</strong> The system generates downloadable PDF reports for attendance, leave applications, and more.</li>
+    <li><strong>Admin Dashboard:</strong> Centralized panel for managing room allocations, monitoring complaints, reviewing leave requests, and more.</li>
+    <li><strong>Secure Login System:</strong> Separate logins for students and administrators ensure role-based access and secure data management.</li>
+  </ul>
+
+  <p>With a user-friendly interface and automated workflows, the Hostel Management System not only simplifies complex processes but also promotes efficient communication and record-keeping among students and administrators. It ensures that all stakeholders have access to real-time data, reducing delays and manual errors.</p>
+
+  <p>Our goal is to build a smart, responsive, and scalable system that enhances the overall hostel experience for everyone involved.</p>
+</section>
+
+  </div>
+
+</body>
+</html>

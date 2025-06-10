@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submit Complaint</title>
+  <style>
+    /* Body & general styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* Navbar styles */
+    .navbar {
+      width: 100%;
+      background-color: #1e3a8a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .navbar-title {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-title span {
+      margin-left: 8px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-left: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .nav-buttons a:hover {
+      background-color: #2563eb;
+    }
+
+    /* Container */
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 360px;
+      margin-top: 50px; /* space below navbar */
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1e3a8a;
+      margin-bottom: 20px;
+    }
+
+    /* Form styles */
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    form input[type="text"],
+    form select,
+    form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1.5px solid #3b82f6;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+      resize: vertical;
+      color: #0f172a;
+    }
+
+    form input[type="text"]::placeholder,
+    form textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    form button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #3b82f6;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    form button[type="submit"]:hover {
+      background-color: #2563eb;
+    }
+
+    /* Confirmation message */
+    #confirmationMessage {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+      color: #16a34a; /* green for success */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-title">
+      🏛️ <span>Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</span>
+    </div>
+    <div class="nav-buttons">
+      <a href="/student_dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Complaint Container -->
+  <div class="container">
+    <h2>Submit Your Complaint</h2>
+
+    <form id="complaintForm">
+      <label for="complaintTitle">Complaint Title</label>
+      <input type="text" id="complaintTitle" placeholder="Enter title" required />
+
+      <label for="complaintCategory">Complaint Category</label>
+      <select id="complaintCategory" required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="Maintenance">Maintenance</option>
+        <option value="Food">Food</option>
+        <option value="Noise">Noise</option>
+        <option value="Cleanliness">Cleanliness</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="complaintDescription">Complaint Description</label>
+      <textarea
+        id="complaintDescription"
+        rows="4"
+        placeholder="Enter your complaint details"
+        required
+      ></textarea>
+
+      <button type="submit">Submit Complaint</button>
+    </form>
+
+    <div id="confirmationMessage" class="message"></div>
+  </div>
+
+  <script>
+    document.getElementById("complaintForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const title = document.getElementById("complaintTitle").value;
+      const category = document.getElementById("complaintCategory").value;
+      const description = document.getElementById("complaintDescription").value;
+
+      fetch("/student_complaint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title, category, description })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("Complaint submitted successfully!");
+            // Clear form
+            this.reset();
+            document.getElementById("confirmationMessage").innerText = "Complaint submitted successfully!";
+            document.getElementById("confirmationMessage").style.color = "#16a34a";
+          } else {
+            alert("Error: " + data.message);
+            document.getElementById("confirmationMessage").innerText = "Error: " + data.message;
+            document.getElementById("confirmationMessage").style.color = "red";
+          }
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          alert("An error occurred. Please try again later.");
+          document.getElementById("confirmationMessage").innerText = "An unexpected error occurred.";
+          document.getElementById("confirmationMessage").style.color = "red";
+        });
+    });
+  </script>
+</body>
+</html>

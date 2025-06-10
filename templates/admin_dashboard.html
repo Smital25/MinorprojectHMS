@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://i.pinimg.com/736x/86/93/5d/86935d9765e9d71b57cc19df2b8abb7d.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+
+    /* ✅ Full-screen transparent sheet */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 0;
+    }
+
+    /* ✅ Keep dashboard content above the overlay */
+    .navbar,
+    .dashboard-title,
+    .card-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ✅ Keep dashboard content above the overlay */
+    .navbar {
+      background-color: #1e3a8a; /* deep blue */
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .navbar-title {
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-title span {
+      margin-left: 8px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .nav-buttons a:hover {
+      background-color: #2563eb;
+    }
+
+    .dashboard-title {
+      text-align: center;
+      margin: 30px 0;
+      font-size: 32px;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+
+    .card-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px 60px;
+    }
+
+    .card {
+      background-color: #ffffffee;
+      width: 100%;
+      max-width: 600px;
+      margin: 20px 0;
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      color: #0f172a;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: slideUp 0.7s ease forwards;
+    }
+
+    .card:nth-child(even) {
+      animation-delay: 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+      color: #ffffff;
+    }
+
+    .card i {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .card:hover i {
+      color: #ffffff;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ Background Overlay -->
+  <div class="overlay"></div>
+
+  <div class="navbar">
+    <div class="navbar-title">
+      🏛️ <span>Shri Dharmasthala Manjunatheshwar College of Engineering and Technology</span>
+    </div>
+    <div class="nav-buttons">
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- ✅ Dashboard Title -->
+  <h1 class="dashboard-title">Admin Dashboard</h1>
+
+  <!-- ✅ Cards Section -->
+  <div class="card-container">
+    <div class="card" onclick="navigateTo('/student_info')">
+      <i class="fas fa-user-graduate"></i>
+      <h3>Student Information</h3>
+    </div>
+
+    <div class="card" onclick="navigateTo('/main')">
+      <i class="fas fa-door-open"></i>
+      <h3>Room Management</h3>
+    </div>
+
+    <div class="card" onclick="navigateTo('/view_attendance')">
+      <i class="fas fa-clipboard-list"></i>
+      <h3>View Attendance</h3>
+    </div>
+
+    <div class="card" onclick="navigateTo('/notification')">
+      <i class="fas fa-bell"></i>
+      <h3>Manage Notifications</h3>
+    </div>
+
+    <div class="card" onclick="navigateTo('/ladmin_dashboard')">
+      <i class="fas fa-calendar-check"></i>
+      <h3>Leave Requests</h3>
+    </div>
+
+    <div class="card" onclick="navigateTo('/admin_complaint')">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>View Complaints</h3>
+    </div>
+
+    
+  </div>
+
+  <script>
+    function navigateTo(url) {
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>

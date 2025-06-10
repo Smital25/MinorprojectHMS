@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Swap Rooms</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #f9fafb;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #ffffff;
+      color: #1e3a8a;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .navbar a {
+      color: #1e3a8a;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 2rem;
+      color: #ffffff;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      background-color: #f9fafb;
+      color: #111827;
+      margin: 20px auto;
+      padding: 30px 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      max-width: 1200px;
+      flex-wrap: wrap;
+    }
+
+    .form-section {
+      width: 45%;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      animation: slideUp 0.8s ease-in-out;
+    }
+
+    .form-section h3 {
+      color: #1e3a8a;
+      border-left: 6px solid #3b82f6;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 100%;
+      transition: box-shadow 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 5px #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    .center-button {
+      width: 100%;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    button[type="submit"] {
+      padding: 12px 24px;
+      background: linear-gradient(to right, #3b82f6, #1e3a8a);
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button[type="submit"]:hover {
+      transform: scale(1.05);
+    }
+
+    #message {
+      text-align: center;
+      color: #b91c1c;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0 }
+      to { transform: translateY(0); opacity: 1 }
+    }
+
+    @media (max-width: 1000px) {
+      .form-section {
+        width: 100%;
+      }
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <div><strong>🏛️ Shri Dharmasthala Manjunatheshwar college of Engineering and Technology</strong></div>
+    <a href="/main">← Go to Dashboard</a>
+  </div>
+
+  <h2>Swap Room </h2>
+
+  <div class="container">
+    <form id="swapForm" style="width: 100%;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <div class="form-section">
+          <h3>Student 1 Details</h3>
+          <input type="text" id="roomNumber1" placeholder="Room Number (e.g., 201)" required />
+          <input type="text" id="student1" placeholder="Full Name" required />
+          <input type="text" id="usn1" placeholder="Student USN" required />
+          <select id="gender1" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <select id="hostel1" required>
+            <option value="" disabled selected>Select Hostel</option>
+          </select>
+        </div>
+
+        <div class="form-section">
+          <h3>Student 2 Details</h3>
+          <input type="text" id="roomNumber2" placeholder="Room Number (e.g., 301)" required />
+          <input type="text" id="student2" placeholder="Full Name" required />
+          <input type="text" id="usn2" placeholder="Student USN" required />
+          <select id="gender2" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <select id="hostel2" required>
+            <option value="" disabled selected>Select Hostel</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="center-button">
+        <button type="submit">Submit Swap Request</button>
+        <p id="message"></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const hostelOptions = {
+      Male: ["Shamala", "Netravati", "Narmada"],
+      Female: ["Hemavati", "Sharavati"]
+    };
+
+    function updateHostelOptions(genderId, hostelId) {
+      const gender = document.getElementById(genderId).value;
+      const hostelSelect = document.getElementById(hostelId);
+      hostelSelect.innerHTML = '<option value="" disabled selected>Select Hostel</option>';
+      if (hostelOptions[gender]) {
+        hostelOptions[gender].forEach(h => {
+          const opt = document.createElement("option");
+          opt.value = h;
+          opt.textContent = h;
+          hostelSelect.appendChild(opt);
+        });
+      }
+    }
+
+    document.getElementById("gender1").addEventListener("change", () => {
+      updateHostelOptions("gender1", "hostel1");
+    });
+
+    document.getElementById("gender2").addEventListener("change", () => {
+      updateHostelOptions("gender2", "hostel2");
+    });
+
+    document.getElementById("swapForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const s1 = {
+        roomNumber: document.getElementById("roomNumber1").value.trim(),
+        name: document.getElementById("student1").value.trim(),
+        usn: document.getElementById("usn1").value.trim(),
+        gender: document.getElementById("gender1").value,
+        hostel: document.getElementById("hostel1").value
+      };
+
+      const s2 = {
+        roomNumber: document.getElementById("roomNumber2").value.trim(),
+        name: document.getElementById("student2").value.trim(),
+        usn: document.getElementById("usn2").value.trim(),
+        gender: document.getElementById("gender2").value,
+        hostel: document.getElementById("hostel2").value
+      };
+
+      for (const [key, value] of Object.entries(s1).concat(Object.entries(s2))) {
+        if (!value) {
+          document.getElementById("message").textContent = "All fields must be filled.";
+          return;
+        }
+      }
+
+      try {
+        const res = await fetch("/swap_rooms_request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ student1: s1, student2: s2 }),
+        });
+
+        const result = await res.json();
+        document.getElementById("message").textContent = result.message || result.error;
+      } catch (err) {
+        document.getElementById("message").textContent = "Something went wrong.";
+      }
+    });
+  </script>
+</body>
+</html>

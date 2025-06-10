@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sharavati Hostel Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      display: flex;
+      background-color: #f9fafb;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #0f172a;
+      color: #ffffff;
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+    }
+
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #3b82f6;
+    }
+
+    .sidebar .user {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .sidebar .user img {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .sidebar .user h3 {
+      font-size: 18px;
+      color: #e0e7ff;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 12px 15px;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: #1e3a8a;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .navbar {
+      background-color: #ffffff;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e0e7ff;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    .navbar h1 {
+      font-size: 20px;
+      color: #1e3a8a;
+    }
+
+    .navbar .nav-link {
+      text-decoration: none;
+      color: #1e3a8a;
+      font-weight: bold;
+      margin-left: 20px;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .container h2 {
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    .container p {
+      color: #374151;
+      margin-bottom: 30px;
+    }
+
+    /* New options styling */
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 25px;
+    }
+
+    .card, .card-link {
+      background-color: #f9fafb;
+      color: #0f172a;
+      padding: 30px 20px;
+      text-align: center;
+      font-weight: 600;
+      border-radius: 12px;
+      border: 1px solid #e0e7ff;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .card p {
+      font-size: 2.5rem;
+      margin-top: 10px;
+      color: #2563eb;
+    }
+
+    .card-link h3, .card h3 {
+      margin-top: 15px;
+      font-size: 1.2rem;
+    }
+
+    .card:hover, .card-link:hover {
+      background-color: #3b82f6;
+      color: white;
+      transform: translateY(-5px);
+    }
+
+    .card-link i, .card i {
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="user">
+      <h1>Admin</h1>
+    </div>
+    <div class="nav-links">
+      <a href="/admin_dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/allocate"><i class="fas fa-bed"></i> Allocate Rooms</a>
+      <a href="/swap"><i class="fas fa-exchange-alt"></i> Swap Rooms</a>
+      <a href="/view"><i class="fas fa-eye"></i> View Rooms</a>
+      <a href="/manage"><i class="fas fa-tools"></i> Manage Rooms</a>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <h1>🏛️ Shri Dharmasthala Manjunatheshwara College of Engineering & Technology</h1>
+      <div>
+        <a href="/admin_dashboard" class="nav-link">📊 Dashboard</a>
+        <a href="/" class="nav-link">🏠 Home</a>
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="container">
+      <h2>Welcome to Hostel Room Management System</h2>
+      <p>Select a feature below:</p>
+
+          <div class="options">
+      <div class="card">
+        <i class="fas fa-door-open fa-3x" style="color:#3b82f6;"></i>
+        <h3>Total Rooms</h3>
+        <p id="total-rooms">Loading...</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-bed fa-3x" style="color:#10b981;"></i>
+        <h3>Occupied Rooms</h3>
+        <p id="occupied-rooms">Loading...</p>
+      </div>
+
+      <div class="card">
+        <i class="fas fa-door-closed fa-3x" style="color:#ef4444;"></i>
+        <h3>Vacant Rooms</h3>
+        <p id="vacant-rooms">Loading...</p>
+      </div>
+    </div>
+
+        </a>
+      </div>
+    </div>
+  </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/room-stats")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("total-rooms").innerText = data.total_rooms;
+        document.getElementById("occupied-rooms").innerText = data.occupied_rooms;
+        document.getElementById("vacant-rooms").innerText = data.vacant_rooms;
+      })
+      .catch(error => {
+        console.error("Error fetching room stats:", error);
+        document.getElementById("total-rooms").innerText = "N/A";
+        document.getElementById("occupied-rooms").innerText = "N/A";
+        document.getElementById("vacant-rooms").innerText = "N/A";
+      });
+  });
+</script>
+
+</body>
+</html>

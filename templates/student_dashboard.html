@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Dashboard</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  />
+  <style>
+    /* Body and Background */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://i.pinimg.com/736x/86/93/5d/86935d9765e9d71b57cc19df2b8abb7d.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #0f172a;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+    /* Overlay for background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 0;
+    }
+
+   /* Navbar */
+.navbar {
+  background-color: #1e3a8a; /* deep blue */
+  color: white;
+  padding: 15px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.navbar p {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+}
+
+    .btn-logout {
+      background-color: #3b82f6;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 14px;
+    }
+    .btn-logout:hover {
+      background-color: #2563eb;
+    }
+
+    /* Dashboard container */
+    .dashboard {
+      position: relative;
+      z-index: 1;
+      padding: 30px 20px 60px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .dashboard h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-bottom: 8px;
+    }
+    .dashboard p {
+      font-size: 18px;
+      color: #0f172a;
+      margin-bottom: 30px;
+    }
+
+    /* Cards section */
+    .card {
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      color: #0f172a;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+      color: #ffffff;
+    }
+    .card:hover .icon {
+      color: #ffffff !important;
+    }
+
+    .icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+      transition: color 0.3s ease;
+    }
+    .text-primary {
+      color: #3b82f6 !important;
+    }
+    .text-success {
+      color: #16a34a !important;
+    }
+    .text-danger {
+      color: #dc2626 !important;
+    }
+    h4 {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .btn-custom {
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 10px 0;
+      font-size: 16px;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+      .dashboard h2 {
+        font-size: 24px;
+      }
+      h4 {
+        font-size: 18px;
+      }
+      p {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <p>🏛️ Shri Dharmastala Manjunatheshwara College of Engineering and Technology</p>
+    <button class="btn-logout" onclick="location.href='/logout'">Logout</button>
+  </nav>
+
+  <!-- Welcome Section -->
+  <div class="dashboard">
+    <h2>Welcome to your Dashboard, {{ student['name'] }}</h2>
+    <p><strong>Student ID:</strong> {{ student['student_id'] }}</p>
+  </div>
+
+  <!-- Cards Section -->
+  <div class="dashboard container">
+    <div class="row justify-content-center g-4">
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <div class="icon text-primary"><i class="fas fa-file-alt"></i></div>
+          <h4>Leave Letter</h4>
+          <p>Submit a leave request to the hostel management.</p>
+          <a href="lstudent_dashboard" class="btn btn-primary btn-custom w-100">Apply Leave</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <div class="icon text-success"><i class="fas fa-calendar-check"></i></div>
+          <h4>Attendance</h4>
+          <p>Check your hostel leave records.</p>
+          <a href="/main_attendance" class="btn btn-success btn-custom w-100">Mark Attendance</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-4 text-center">
+          <div class="icon text-danger"><i class="fas fa-exclamation-circle"></i></div>
+          <h4>Mark a Complaint</h4>
+          <p>Report an issue or lodge a complaint.</p>
+          <a href="/student_complaint" class="btn btn-danger btn-custom w-100">Submit Complaint</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leave Request</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .navbar {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .back-btn {
+      text-decoration: none;
+      background-color: #3b82f6;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #2563eb;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 25px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .container h2 {
+      text-align: center;
+      color: #1e3a8a;
+      margin-bottom: 25px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      resize: vertical;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    button[type="submit"] {
+      background-color:#5b7edd;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #1e3a8a;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <div class="navbar">
+    <h2>Leave Request Form</h2>
+    <a href="/student_dashboard" class="back-btn">Back to Dashboard</a>
+  </div>
+
+  <!-- ✅ Leave Request Form -->
+  <div class="container">
+    <h2>Leave Request Form</h2>
+    <form id="leaveForm" method="POST" action="/leave_request">
+      <input type="hidden" id="student_id" name="student_id" value="{{ student_id }}">
+      <input type="text" id="room_id" name="room_id" placeholder="Room ID" required>
+      <input type="date" id="start_date" name="start_date" required>
+      <input type="date" id="end_date" name="end_date" required>
+      <textarea id="reason" name="reason" placeholder="Reason for Leave" required></textarea>
+      <button type="submit">Submit Leave Request</button>
+    </form>
+  </div>
+
+  <!-- ✅ Form Validation Script -->
+  <script>
+    document.getElementById("leaveForm").addEventListener("submit", function(event) {
+      const roomId = document.getElementById("room_id").value.trim();
+      const startDate = document.getElementById("start_date").value;
+      const endDate = document.getElementById("end_date").value;
+      const reason = document.getElementById("reason").value.trim();
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      if (!/^[a-zA-Z0-9]+$/.test(roomId)) {
+        alert("Room ID must be alphanumeric.");
+        event.preventDefault();
+        return;
+      }
+
+      if (startDate < currentDate) {
+        alert("Start Date cannot be in the past.");
+        event.preventDefault();
+        return;
+      }
+
+      if (endDate < startDate) {
+        alert("End Date cannot be earlier than Start Date.");
+        event.preventDefault();
+        return;
+      }
+
+      if (reason.length < 10) {
+        alert("Reason for Leave must be at least 10 characters long.");
+        event.preventDefault();
+        return;
+      }
+    });
+  </script>
+
+</body>
+</html>

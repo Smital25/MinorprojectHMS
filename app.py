@@ -22,7 +22,15 @@ app = Flask(__name__, template_folder="templates")  # Ensure Flask finds HTML fi
 CORS(app)
 
 # MongoDB Configuration
-client = MongoClient("mongodb://localhost:27017/")
+# ✅ Correct
+# mongo_uri = os.environ.get("MONGO_URI")
+# client = MongoClient("mongo_uri")
+
+import os
+from pymongo import MongoClient
+
+mongo_uri = os.environ.get("mongodb+srv://smitask2510:y1WUqvuNfLB73UKl@cluster0.drb1vsi.mongodb.net/")  # Load from environment
+client = MongoClient(mongo_uri)
 db = client["user_db"]
 rooms_collection = db["rooms"]
 allocations_collection = db["roomallocation"]

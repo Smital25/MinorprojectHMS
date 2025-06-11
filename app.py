@@ -29,7 +29,7 @@ CORS(app)
 import os
 from pymongo import MongoClient
 
-mongo_uri = os.environ.get("mongodb+srv://smitask2510:y1WUqvuNfLB73UKl@cluster0.drb1vsi.mongodb.net/")  # Load from environment
+mongo_uri = os.environ.get("MONGO_URI")  # Load from environment
 client = MongoClient(mongo_uri)
 db = client["user_db"]
 rooms_collection = db["rooms"]
@@ -1261,5 +1261,9 @@ def delete_allocation():
 
 
 
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)

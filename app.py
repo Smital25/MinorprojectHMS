@@ -106,32 +106,29 @@ def login():
         role = request.form.get('role')
 
         if role == 'admin':
-            # Check admin credentials
             if username == 'admin' and password == 'admin123':
                 session['role'] = 'admin'
                 session['username'] = username
                 flash("Login successful!", "success")
                 return redirect(url_for('admin_dashboard'))
             else:
-                flash('Invalid admin credentials!')
+                flash('Invalid admin credentials!', 'danger')
                 return redirect(url_for('login'))
-        
+
         elif role == 'student':
-            # Check student credentials
             student = users_collection.find_one({'username': username})
             if student and check_password_hash(student['password'], password):
                 session['role'] = 'student'
                 session['username'] = username
-                session['student_id'] = student['student_id']  # Save student ID in session
+                session['student_id'] = student['student_id']
                 flash("Login successful!", "success")
-                print(f"Session after login: {session}")  # Debugging line
-                return redirect(url_for('student_dashboard'))  # Redirect to student dashboard
+                return redirect(url_for('student_dashboard'))
             else:
-                flash('Invalid student credentials!')
+                flash('Invalid student credentials!', 'danger')
                 return redirect(url_for('login'))
-        
+
         else:
-            flash('Please select a valid role.')
+            flash('Please select a valid role.', 'danger')
             return redirect(url_for('login'))
 
     return render_template('login.html')
@@ -164,16 +161,18 @@ def register():
         contact_number = request.form['contact_number']
         age = request.form['age']
         gender = request.form['gender']
+        blood_group = request.form['blood_group']
         email = request.form['email']
         dob = request.form['dob']
         address = request.form['address']
-        username = request.form['username']
         password = request.form['password']
 
-        # ✅ Check if username already exists
+        username = student_id  # ✅ Automatically use USN as username
+
+        # Check if the USN (used as username) is already registered
         existing_user = users_collection.find_one({'username': username})
         if existing_user:
-            flash("Username already taken! Please choose another.", "danger")
+            flash("USN already registered. Please login instead.", "danger")
             return redirect(url_for('register'))
 
         hashed_password = generate_password_hash(password)
@@ -184,12 +183,14 @@ def register():
             'contact_number': contact_number,
             'age': age,
             'gender': gender,
+            'blood_group': blood_group,
             'email': email,
             'dob': dob,
             'address': address,
             'username': username,
             'password': hashed_password
         })
+
         flash("Registration successful! Please login.", "success")
         return redirect(url_for('login'))
 
@@ -640,11 +641,11 @@ import uuid
 
 from datetime import datetime
 
-def get_current_datetime():
-    now = datetime.now()
-    date_str = now.strftime("%d-%m-%Y")  
-    time_str = now.strftime("%H:%M:%S")  
-    return date_str, time_str
+# def get_current_datetime():
+#     now = datetime.now()
+#     date_str = now.strftime("%d-%m-%Y")  
+#     time_str = now.strftime("%H:%M:%S")  
+#     return date_str, time_str
 
 import subprocess
 
@@ -691,12 +692,12 @@ def get_current_datetime():
 
 from datetime import datetime, time
 
-def is_within_allowed_time():
-    now = datetime.now().time()
-    start_time = time(21, 0)   # 9:00 PM
-    end_time = time(22, 30)    # 10:30 PM
+# def is_within_allowed_time():
+#     now = datetime.now().time()
+#     start_time = time(21, 0)   # 9:00 PM
+#     end_time = time(22, 30)    # 10:30 PM
 
-    return start_time <= now <= end_time
+#     return start_time <= now <= end_time
 
 @app.route('/main_attendance')
 def main_attendance():
@@ -704,50 +705,87 @@ def main_attendance():
 
 @app.route('/mark_attendance', methods=['POST'])
 def mark_attendance():
-    # Ensure student is logged in
+    # ✅ Session check
     if 'role' not in session or session['role'] != 'student':
         return jsonify({"status": "error", "message": "Unauthorized. Please login as student."}), 401
 
-    student_name = session.get('username')  # Get from session
-    student_id = session.get('student_id')  # Get from session
+    student_id = session.get('student_id')
 
-    if not student_name or not student_id:
-        return jsonify({"status": "error", "message": "Missing student session info. Please log in again."}), 400
+    if not student_id:
+        return jsonify({"status": "error", "message": "Missing student session info."}), 400
 
-    # ✅ TIME CHECK: Only allow between 9:00 PM and 10:30 PM
-    if not is_within_allowed_time():
+    # ✅ Time check (9:00 PM - 10:30 PM)
+    now = datetime.now().time()
+    start_time = time(21, 0)
+    end_time = time(22, 30)
+    if not (start_time <= now <= end_time):
         return jsonify({
             "status": "error",
             "message": "Attendance can only be marked between 9:00 PM and 10:30 PM."
         }), 403
 
-    # ✅ WiFi CHECK
-    if not is_connected_to_wifi():
-        return jsonify({"status": "error", "message": "You must be connected to hostel WiFi to mark attendance."}), 403
+    # ✅ SSID Check - must be connected to "Smiti"
+    try:
+        output = subprocess.check_output("netsh wlan show interfaces", shell=True, text=True)
+        for line in output.splitlines():
+            if "SSID" in line and "BSSID" not in line:
+                ssid = line.split(":")[1].strip()
+                if ssid != "Smiti":
+                    return jsonify({"status": "error", "message": "Connect to hostel WiFi (Smiti) to mark attendance."}), 403
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"WiFi check failed: {e}"}), 500
 
-    # ✅ Get MAC Address
-    mac_address = get_mac_address()
-    if not mac_address:
-        return jsonify({"status": "error", "message": "Unable to retrieve MAC address."}), 500
+    # ✅ MAC Address
+    try:
+        mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff)
+                                for ele in range(0, 8*6, 8)][::-1])
+    except:
+        return jsonify({"status": "error", "message": "Unable to get MAC address"}), 500
 
-    # ✅ Get Date and Time
-    date_str, time_str = get_current_datetime()
+    # ✅ Date & Time
+    date_str = datetime.now().strftime("%d-%m-%Y")
+    time_str = datetime.now().strftime("%I:%M %p")
+    timestamp = datetime.now().isoformat()
+    ip_address = request.remote_addr
 
-    # ✅ Prevent Duplicate
-    existing = attendance_collection.find_one({
-        "student_id": student_id,
-        "date": date_str
-    })
-    if existing:
+    # ✅ Check if already marked today
+    if attendance_collection.find_one({"student_id": student_id, "date": date_str}):
         return jsonify({"status": "error", "message": "Attendance already marked for today."}), 409
 
-    # ✅ Insert Attendance
+    # ✅ Fetch student document
+    student_doc = users_collection.find_one({"student_id": student_id})
+    if not student_doc:
+        return jsonify({"status": "error", "message": "Student not found in DB."}), 404
+
+    # ✅ Get student_name from DB
+    student_name = student_doc.get("name") or student_doc.get("student_name")
+    if not student_name:
+        return jsonify({"status": "error", "message": "Student name not found in DB record."}), 500
+
+    # ✅ MAC address binding
+    registered_mac = student_doc.get("mac_address")
+
+    if not registered_mac:
+        # First time: save the MAC
+        users_collection.update_one(
+            {"student_id": student_id},
+            {"$set": {"mac_address": mac_address}}
+        )
+    elif registered_mac != mac_address:
+        return jsonify({
+            "status": "error",
+            "message": "MAC address mismatch. Please use your registered device."
+        }), 403
+
+    # ✅ Save attendance
     attendance_data = {
         "student_name": student_name,
         "student_id": student_id,
         "mac_address": mac_address,
+        "ip_address": ip_address,
         "date": date_str,
         "time": time_str,
+        "timestamp": timestamp,
         "status": "Present"
     }
 
@@ -761,8 +799,23 @@ def view_attendance():
 
 @app.route('/view_attendance/attendance_record', methods=['GET'])
 def get_attendance_records():
-    records = list(attendance_collection.find({}, {"_id": 0}))
-    return jsonify(records)
+    records = attendance_collection.find({}, {"_id": 0})  # exclude MongoDB _id
+    formatted_records = []
+
+    for record in records:
+        formatted = {
+            "student_id": record.get("student_id", ""),
+            "student_name": record.get("student_name", ""),
+            "mac_address": record.get("mac_address", ""),
+            "date": record.get("date", ""),
+            "time": record.get("time", ""),
+            "status": record.get("status", "")
+        }
+        formatted_records.append(formatted)
+
+    return jsonify(formatted_records)
+
+
 
 @app.route('/get_logged_in_student')
 def get_logged_in_student():
@@ -784,6 +837,9 @@ def generate_report():
     return render_template("generate_report.html")
 
 # API to fetch report data by date range
+from flask import request, jsonify
+from datetime import datetime
+
 @app.route('/generate_report/data', methods=['POST'])
 def generate_report_data():
     data = request.json
@@ -794,24 +850,35 @@ def generate_report_data():
         return jsonify({"status": "error", "message": "Start and end dates are required."}), 400
 
     try:
-        # Parse dates to datetime objects (assuming DD-MM-YYYY format)
         start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
         end_date = datetime.strptime(end_date_str, "%d-%m-%Y")
 
-        # Format to string for querying since DB stores as "DD-MM-YYYY"
-        start_str = start_date.strftime("%d-%m-%Y")
-        end_str = end_date.strftime("%d-%m-%Y")
+        if start_date > end_date:
+            return jsonify({"status": "error", "message": "Start date must be before end date."}), 400
 
-        # Query records between the date range
-        records = list(attendance_collection.find({
-            "date": {"$gte": start_str, "$lte": end_str}
-        }, {"_id": 0}))
+        all_records = list(attendance_collection.find({}, {"_id": 0}))
 
-        return jsonify({"status": "success", "records": records})
-    
+        filtered = []
+        for rec in all_records:
+            try:
+                rec_date = datetime.strptime(rec.get("date", ""), "%d-%m-%Y")
+                if start_date <= rec_date <= end_date:
+                    formatted = {
+                        "student_id": rec.get("student_id", ""),
+                        "student_name": rec.get("student_name", ""),
+                        "date": rec.get("date", ""),
+                        "time": rec.get("time", ""),
+                        "status": rec.get("status", "")
+                    }
+                    filtered.append(formatted)
+            except:
+                continue
+
+        return jsonify({"status": "success", "records": filtered})
+
     except ValueError:
         return jsonify({"status": "error", "message": "Invalid date format. Use DD-MM-YYYY."}), 400
-    
+
 from flask import request, send_file, jsonify
 from fpdf import FPDF
 import io
@@ -837,47 +904,53 @@ def generate_pdf_report():
     except ValueError:
         return jsonify({"status": "error", "message": "Invalid date format. Use DD-MM-YYYY."}), 400
 
-    start_str = start.strftime("%d-%m-%Y")
-    end_str = end.strftime("%d-%m-%Y")
+    all_records = list(attendance_collection.find({}, {"_id": 0}))
 
-    records = list(attendance_collection.find({
-        "date": {"$gte": start_str, "$lte": end_str}
-    }))
+    records = []
+    for r in all_records:
+        try:
+            rec_date = datetime.strptime(r.get("date", ""), "%d-%m-%Y")
+            if start <= rec_date <= end:
+                records.append({
+                    "student_id": r.get('student_id', 'N/A'),
+                    "student_name": r.get('student_name', 'N/A'),
+                    "date": r.get('date', 'N/A'),
+                    "time": r.get('time', 'N/A'),
+                    "status": r.get('status', 'N/A')
+                })
+        except:
+            continue
 
     if not records:
         return jsonify({"status": "error", "message": "No records found for selected dates."}), 404
 
-    # Create PDF
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 14)
     pdf.cell(200, 10, txt="Attendance Report", ln=True, align='C')
     pdf.ln(10)
 
-    # Set up table headers
-    pdf.set_font("Arial", 'B', 10)
-    col_widths = [40, 25, 30, 30, 30]  # Adjust widths as needed
+    headers = ['Student ID', 'Student Name', 'Date', 'Time', 'Status']
+    col_widths = [40, 50, 30, 30, 30]
 
-    headers = ['Student Name', 'Student ID', 'Date', 'Time', 'Status']
+    pdf.set_font("Arial", 'B', 10)
     for i, header in enumerate(headers):
         pdf.cell(col_widths[i], 10, header, 1, 0, 'C')
     pdf.ln()
 
-    # Table rows
     pdf.set_font("Arial", '', 10)
     for r in records:
         row = [
-            r.get('student_name', 'N/A'),
-            r.get('student_id', 'N/A'),
-            r.get('date', 'N/A'),
-            r.get('time', 'N/A'),
-            r.get('status', 'N/A')
+            r['student_id'],
+            r['student_name'],
+            r['date'],
+            r['time'],
+            r['status']
         ]
         for i, item in enumerate(row):
             pdf.cell(col_widths[i], 10, str(item), 1, 0, 'C')
         pdf.ln()
 
-    # Write to memory and send
     pdf_bytes = pdf.output(dest='S').encode('latin1')
     pdf_stream = io.BytesIO(pdf_bytes)
     pdf_stream.seek(0)
@@ -888,7 +961,6 @@ def generate_pdf_report():
         download_name='Attendance_Report.pdf',
         as_attachment=True
     )
-
 
 # complaints_collection = []
 
@@ -1084,24 +1156,42 @@ def allocate_room():
     if not registered_student:
         return jsonify({"message": "Student is not registered. Allocation denied."}), 403
 
-    # ✅ 2. Check if student is already allocated in any room
+    student_gender = registered_student.get("gender")
+    if not student_gender:
+        return jsonify({"message": "Gender not specified for the student"}), 400
+
+    # ✅ 2. Check if already allocated
     existing_allocation = rooms_collection.find_one({"students.usn": usn})
     if existing_allocation:
-        return jsonify({"message": f"Student is already allocated in room {existing_allocation['room_number']}."}), 409
+        return jsonify({"message": f"Student already allocated in room {existing_allocation['room_number']}."}), 409
 
-    # ✅ 3. Fetch the target room
+    # ✅ 3. Get the target room
     room = rooms_collection.find_one({"room_number": room_number})
     if not room:
         return jsonify({"message": "Room not found"}), 404
 
-    # ✅ 4. Check room capacity
-    if len(room["students"]) >= room["sharing"]:
+    hostel = room.get("hostel", "")
+
+    # ✅ 4. Validate student gender vs hostel
+    if student_gender == "Male" and hostel not in ["Narmada", "Shalmala", "Netravati"]:
+        return jsonify({"message": f"Male students cannot be allocated to {hostel} hostel"}), 403
+    if student_gender == "Female" and hostel not in ["Hemavati", "Sharavati"]:
+        return jsonify({"message": f"Female students cannot be allocated to {hostel} hostel"}), 403
+
+    # ✅ 5. Enforce room-level gender consistency
+    existing_students = room.get("students", [])
+    for student in existing_students:
+        existing_student = users_collection.find_one({"student_id": student["usn"]})
+        if existing_student and existing_student.get("gender") != student_gender:
+            return jsonify({"message": "Cannot mix male and female students in the same room"}), 403
+
+    # ✅ 6. Room capacity check
+    if len(existing_students) >= room["sharing"]:
         return jsonify({"message": "Room is full"}), 400
 
-    # ✅ 5. Get name from registered user
     name = registered_student["name"]
 
-    # ✅ 6. Allocate the student
+    # ✅ 7. Allocate student
     rooms_collection.update_one(
         {"room_number": room_number},
         {"$push": {"students": {"name": name, "usn": usn}}}
@@ -1111,12 +1201,12 @@ def allocate_room():
         "room_number": room_number,
         "name": name,
         "usn": usn,
-        "hostel": room.get("hostel"),
-        "sharing": room.get("sharing")
+        "hostel": hostel,
+        "sharing": room.get("sharing"),
+        "gender": student_gender
     })
 
     return jsonify({"message": "Student allocated successfully"}), 200
-
 
 @app.route("/remove_student", methods=["POST"])
 def remove_student():

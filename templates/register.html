@@ -176,8 +176,10 @@
         </div>
 
         <form method="POST" onsubmit="return validateForm()">
-            <label for="student_id">Student USN:</label>
-            <input type="text" id="student_id" name="student_id" placeholder="Enter your USN" required>
+        <label for="student_id">Student USN:</label>
+        <input type="text" id="student_id" name="student_id" placeholder="Enter your USN" 
+        pattern="2SD\d{2}[A-Z]{2}\d{3}" title="Format: 2SD followed by 2 digits, 2 uppercase letters, and 3 digits" required>
+
 
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" placeholder="Enter your Name" required>
@@ -218,8 +220,8 @@
             <label for="address">Address:</label>
             <textarea id="address" name="address" placeholder="Enter your Address" required></textarea>
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your Username" required>
+<label for="username">Username:</label>
+<input type="text" id="username" name="username" placeholder="Will be same as your USN" readonly required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" placeholder="Enter your Password" required>
@@ -235,6 +237,11 @@
             const contactNumber = document.getElementById('contact_number').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
+                    document.getElementById('student_id').addEventListener('input', function () {
+                const usn = this.value;
+                document.getElementById('username').value = usn;
+            });
 
             const phoneRegex = /^[0-9]{10}$/;
             if (!phoneRegex.test(contactNumber)) {

@@ -21,10 +21,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__, template_folder="templates")  # Ensure Flask finds HTML files
 CORS(app)
 
-# MongoDB Configuration
-# ✅ Correct
-# mongo_uri = os.environ.get("MONGO_URI")
-# client = MongoClient("mongo_uri")
 
 import os
 from pymongo import MongoClient
@@ -227,9 +223,6 @@ def main_dashboard():
 def view_rooms():
     return render_template("view.html")
 
-# @app.route('/swaps')
-# def swap_rooms():
-#     return render_template("swap.html")
 @app.route('/swap') 
 def swap_rooms(): 
      return render_template("swap.html")
@@ -348,41 +341,6 @@ def leave_request():
 # Generate Leave Request PDF
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
-# def generate_leave_pdf(student_id, room_id, start_date, end_date, reason, pdf_path):
-#     try:
-#         c = canvas.Canvas(pdf_path, pagesize=letter)
-#         width, height = letter
-
-#         # Title of the letter
-#         c.setFont("Helvetica", 12)
-#         c.drawString(100, height - 100, "Leave Request Letter")
-#         c.line(100, height - 110, 500, height - 110)
-
-#         # Letter content
-#         c.drawString(100, height - 140, f"Student ID: {student_id}")
-#         c.drawString(100, height - 160, f"Room ID: {room_id}")
-#         c.drawString(100, height - 180, f"Leave Period: {start_date} to {end_date}")
-#         c.drawString(100, height - 200, f"Reason for Leave: {reason}")
-        
-#         # Formal tone
-#         c.drawString(100, height - 220, "Dear Sir/Madam,")
-#         c.drawString(100, height - 240, "I am a student from SDMCET,")
-#         c.drawString(100, height - 260, "asking you to please grant me leave for the following days.")
-#         c.drawString(100, height - 280, "I hope you will approve this leave request.")
-#         c.drawString(100, height - 300, "Thank you for your consideration.")
-        
-#         # Sign off
-#         c.drawString(100, height - 320, "Sincerely,")
-#         c.drawString(100, height - 340, f"Student ID: {student_id}")
-
-#         # Save the PDF
-#         c.save()
-
-#     except Exception as e:
-#         print(f"Error generating PDF: {e}")
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 from datetime import datetime
 
 def generate_leave_pdf(student_id, room_id, start_date, end_date, reason, pdf_path):
@@ -456,9 +414,6 @@ def generate_leave_pdf(student_id, room_id, start_date, end_date, reason, pdf_pa
 
     except Exception as e:
         print(f"Error generating PDF: {e}")
-
-
-#-----------------------
 
 #send_leave_request
 @app.route('/send_leave_request', methods=['GET', 'POST'])
@@ -640,13 +595,6 @@ import socket
 import uuid
 
 from datetime import datetime
-
-# def get_current_datetime():
-#     now = datetime.now()
-#     date_str = now.strftime("%d-%m-%Y")  
-#     time_str = now.strftime("%H:%M:%S")  
-#     return date_str, time_str
-
 import subprocess
 
 HOSTEL_WIFI_SSID = "Smiti"
@@ -692,16 +640,14 @@ def get_current_datetime():
 
 from datetime import datetime, time
 
-# def is_within_allowed_time():
-#     now = datetime.now().time()
-#     start_time = time(21, 0)   # 9:00 PM
-#     end_time = time(22, 30)    # 10:30 PM
-
-#     return start_time <= now <= end_time
-
 @app.route('/main_attendance')
 def main_attendance():
     return render_template("main_attendance.html")
+
+from flask import request, jsonify, session
+from datetime import datetime, time
+import subprocess
+import uuid
 
 @app.route('/mark_attendance', methods=['POST'])
 def mark_attendance():
@@ -710,14 +656,13 @@ def mark_attendance():
         return jsonify({"status": "error", "message": "Unauthorized. Please login as student."}), 401
 
     student_id = session.get('student_id')
-
     if not student_id:
         return jsonify({"status": "error", "message": "Missing student session info."}), 400
 
-    # ✅ Time check (9:00 PM - 10:30 PM)
+    # ✅ Time check (2:00 PM - 10:30 PM)
     now = datetime.now().time()
-    start_time = time(21, 0)
-    end_time = time(22, 30)
+    start_time = time(11, 0)
+    end_time = time(12, 30)
     if not (start_time <= now <= end_time):
         return jsonify({
             "status": "error",
@@ -727,13 +672,20 @@ def mark_attendance():
     # ✅ SSID Check - must be connected to "Smiti"
     try:
         output = subprocess.check_output("netsh wlan show interfaces", shell=True, text=True)
+        connected_ssid = None
         for line in output.splitlines():
             if "SSID" in line and "BSSID" not in line:
-                ssid = line.split(":")[1].strip()
-                if ssid != "Smiti":
-                    return jsonify({"status": "error", "message": "Connect to hostel WiFi (Smiti) to mark attendance."}), 403
-    except Exception as e:
-        return jsonify({"status": "error", "message": f"WiFi check failed: {e}"}), 500
+                connected_ssid = line.split(":")[1].strip()
+                break
+
+        if not connected_ssid:
+            return jsonify({"status": "error", "message": "No Wi-Fi connection detected. Connect to hostel WiFi (Smiti)."}), 403
+
+        if connected_ssid != "Smiti":
+            return jsonify({"status": "error", "message": f"Connected to '{connected_ssid}'. Connect to hostel WiFi (Smiti)."}), 403
+
+    except subprocess.CalledProcessError as e:
+        return jsonify({"status": "error", "message": f"Wi-Fi interface error: {e}"}), 500
 
     # ✅ MAC Address
     try:
@@ -757,16 +709,14 @@ def mark_attendance():
     if not student_doc:
         return jsonify({"status": "error", "message": "Student not found in DB."}), 404
 
-    # ✅ Get student_name from DB
     student_name = student_doc.get("name") or student_doc.get("student_name")
     if not student_name:
         return jsonify({"status": "error", "message": "Student name not found in DB record."}), 500
 
     # ✅ MAC address binding
     registered_mac = student_doc.get("mac_address")
-
     if not registered_mac:
-        # First time: save the MAC
+        # First time: register MAC address
         users_collection.update_one(
             {"student_id": student_id},
             {"$set": {"mac_address": mac_address}}
@@ -791,7 +741,6 @@ def mark_attendance():
 
     attendance_collection.insert_one(attendance_data)
     return jsonify({"status": "success", "message": "Attendance marked successfully."})
-
 
 @app.route('/view_attendance')
 def view_attendance():
@@ -961,8 +910,6 @@ def generate_pdf_report():
         download_name='Attendance_Report.pdf',
         as_attachment=True
     )
-
-# complaints_collection = []
 
 @app.route('/student_complaint', methods=['GET', 'POST'])
 def submit_complaint():

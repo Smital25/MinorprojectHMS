@@ -38,6 +38,7 @@ We are proud to announce that this project has been **published in the Internati
 
 ## Authors
 - [Pooja S Doddagoudar](https://github.com/POOJASD24)
+- [Smital S Kaginkar](https://github.com/Smital25)
 ## Deployment
 
 The project is hosted live for demo purposes. You can access it here:  
